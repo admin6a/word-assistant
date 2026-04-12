@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>单词助手</title>
+    <style>
+        /* 核心适配：禁止溢出 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { width: 100%; overflow-x: hidden; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, sans-serif; 
+            background-color: #f5f5f5; 
+            -webkit-user-select: none; 
+            user-select: none; 
+            padding: 10px 10px 120px 10px; /* 底部留足空间 */
+        }
+        h1 { color: #333; text-align: center; margin: 10px 0; font-size: 1.3rem; }
+
+        /* 引导界面 */
+        #importGuide { 
+            background: white; border-radius: 15px; padding: 40px 20px; 
+            text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin: 50px 10px; display: none;
+        }
+        .guide-btn { 
+            display: block; width: 100%; padding: 16px; margin: 20px 0;
+            background: #27ae60; color: white; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: bold; box-shadow: 0 4px 10px rgba(39,174,96,0.3);
+        }
+
+        /* 顶部操作区 */
+        .top-btns { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+        .btn-small { 
+            flex: 1; padding: 10px 2px; border-radius: 20px; border: 1px solid #3498db; 
+            background: white; color: #3498db; font-size: 13px; text-align: center; font-weight: bold;
+        }
+        .clear-marks-btn { color: #e67e22; border-color: #e67e22; }
+
+        /* 搜索栏适配修复 */
+        .search-bar { margin-bottom: 12px; display: flex; gap: 6px; width: 100%; }
+        .search-bar input { 
+            flex: 1; min-width: 0; padding: 10px; border: 1px solid #ddd; 
+            border-radius: 8px; font-size: 15px; outline: none; 
+        }
+        .search-bar button { 
+            padding: 0 15px; background-color: #3498db; color: white; 
+            border: none; border-radius: 8px; font-weight: bold; flex-shrink: 0;
+        }
+
+        /* 单词列表 */
+        .word-list { background-color: white; border-radius: 12px; padding: 0 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .word-item { padding: 15px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .word-item:last-child { border-bottom: none; }
+        .word-content { flex: 1; min-width: 0; }
+        .word { font-weight: bold; font-size: 1.1rem; color: #2c3e50; word-wrap: break-word; }
+        .meaning { 
+            margin-top: 8px; color: #444; display: none; background-color: #f9fbff; 
+            padding: 12px; border-left: 4px solid #3498db; border-radius: 4px; font-size: 0.95rem; 
+        }
+
+        .sheet-title-container { display: flex; justify-content: center; padding: 12px 0; border-bottom: 2px solid #3498db; margin-bottom: 10px; }
+        .sheet-title { font-weight: bold; color: #2980b9; font-size: 1rem; }
+
+        .mark-checkbox { width: 26px; height: 26px; border: 2px solid #3498db; border-radius: 6px; appearance: none; -webkit-appearance: none; margin-left: 8px; flex-shrink: 0; position: relative; }
+        .mark-checkbox:checked { background-color: #3498db; }
+        .mark-checkbox:checked::after { content: "✓"; position: absolute; color: white; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; font-size: 16px; }
+
+        /* 底部导航常驻 */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(255, 255, 255, 0.98); padding: 12px 10px; 
+            box-shadow: 0 -3px 15px rgba(0,0,0,0.08); z-index: 1000; 
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .pagination { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 360px; }
+        .pagination button { 
+            padding: 10px 15px; background-color: #3498db; color: white; 
+            border: none; border-radius: 8px; font-weight: bold; flex: 1; margin: 0 5px;
+        }
+        .pagination button:disabled { background-color: #eee; color: #bbb; }
+        #currentPage { font-weight: bold; font-size: 14px; min-width: 60px; text-align: center; }
+        
+        .jump-box { font-size: 12px; color: #888; display: flex; align-items: center; gap: 5px; }
+        .jump-box input { width: 45px; padding: 5px; border: 1px solid #ddd; border-radius: 6px; text-align: center; font-size: 14px; }
+        .go-btn { background: #3498db; color: white; border: none; padding: 5px 12px; border-radius: 6px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="mainContent" style="display:none">
+        <h1>单词助手</h1>
+        <div class="top-btns">
+            <button id="toggleAll" class="btn-small">展开全部</button>
+            <button onclick="clearCurrentPageMarks()" class="btn-small clear-marks-btn">清除本页标记</button>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="输入单词或中文...">
+            <button onclick="searchWords()">搜索</button>
+        </div>
+        <div id="wordListContainer"></div>
+    </div>
+
+    <!-- 唯一导入入口 -->
+    <div id="importGuide">
+        <h2 style="color:#333">未检测到单词库</h2>
+        <p style="color:#666">请导入 JSON 单词表以开始学习</p>
+        <p style="color:#999; font-size:12px; margin-top:10px">格式要求: [{"word":"xxx","meaning":"xxx","list":"xxx"}]</p>
+        <button class="guide-btn" onclick="AndroidBridge.requestExternalImport()">导入 JSON 单词表</button>
+    </div>
+
+    <div class="bottom-nav" id="bottomNav" style="display:none">
+        <div class="pagination">
+            <button id="prevPage">上一页</button>
+            <span id="currentPage">1 / 1</span>
+            <button id="nextPage">下一页</button>
+        </div>
+        <div class="jump-box">
+            跳至第 <input type="number" id="jumpInput" min="1" onkeyup="if(event.keyCode==13)jumpToPage()"> 页 
+            <button class="go-btn" onclick="jumpToPage()">跳转</button>
+        </div>
+    </div>
+
+    <script>
+let sheetNames = []; 
+let currentSheetIndex = 0;
+let markedWords = new Set(JSON.parse(localStorage.getItem('markedWords') || '[]'));
+
+function initFromAndroid() {
+    if (typeof AndroidBridge !== "undefined") {
+        if (!AndroidBridge.hasData()) {
+            document.getElementById('importGuide').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('bottomNav').style.display = 'none';
+            return;
+        }
+        
+        document.getElementById('importGuide').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        document.getElementById('bottomNav').style.display = 'flex';
+
+        sheetNames = JSON.parse(AndroidBridge.getListNames());
+        const lastList = AndroidBridge.getLastListName();
+        currentSheetIndex = sheetNames.indexOf(lastList);
+        if (currentSheetIndex === -1) currentSheetIndex = 0;
+        
+        loadWords(currentSheetIndex);
+    }
+}
+
+function loadWords(idx) {
+    currentSheetIndex = idx;
+    const listName = sheetNames[idx];
+    const wordsJson = AndroidBridge.getWordsByListName(listName);
+    const words = JSON.parse(wordsJson);
+    AndroidBridge.saveCurrentList(listName);
+
+    const container = document.getElementById('wordListContainer');
+    container.innerHTML = `<div class="sheet-title-container"><div class="sheet-title">${listName} (${words.length} 词)</div></div>`;
+    const listDiv = document.createElement('div');
+    listDiv.className = 'word-list';
+    words.forEach((item, i) => listDiv.appendChild(createWordRow(item, i + 1)));
+    container.appendChild(listDiv);
+    
+    document.getElementById('toggleAll').textContent = "展开全部";
+    updateUI();
+}
+
+function createWordRow(item, displayIdx) {
+    const row = document.createElement('div');
+    row.className = 'word-item';
+    row.innerHTML = `
+        <div class="word-content">
+            <span class="word">${displayIdx}. ${item.word}</span>
+            <div class="meaning">${item.meaning}</div>
+        </div>
+        <input type="checkbox" class="mark-checkbox" data-word="${item.word}" ${markedWords.has(item.word)?'checked':''} onclick="event.stopPropagation()">
+    `;
+    row.onclick = () => {
+        const m = row.querySelector('.meaning');
+        m.style.display = m.style.display === 'block' ? 'none' : 'block';
+    };
+    row.querySelector('.mark-checkbox').onchange = (e) => {
+        if(e.target.checked) markedWords.add(item.word);
+        else markedWords.delete(item.word);
+        localStorage.setItem('markedWords', JSON.stringify(Array.from(markedWords)));
+    };
+    return row;
+}
+
+function clearCurrentPageMarks() {
+    const checks = document.querySelectorAll('.mark-checkbox');
+    if(checks.length === 0) return;
+    if(confirm('确定要取消本页所有标记吗？')) {
+        checks.forEach(cb => {
+            markedWords.delete(cb.dataset.word);
+            cb.checked = false;
+        });
+        localStorage.setItem('markedWords', JSON.stringify(Array.from(markedWords)));
+    }
+}
+
+function updateUI() {
+    document.getElementById('currentPage').textContent = `${currentSheetIndex + 1} / ${sheetNames.length}`;
+    document.getElementById('prevPage').disabled = currentSheetIndex === 0;
+    document.getElementById('nextPage').disabled = currentSheetIndex === sheetNames.length - 1;
+    document.getElementById('jumpInput').value = currentSheetIndex + 1;
+}
+
+function jumpToPage() {
+    const p = parseInt(document.getElementById('jumpInput').value);
+    if(p >= 1 && p <= sheetNames.length) {
+        loadWords(p - 1);
+        window.scrollTo(0,0);
+    }
+}
+
+function searchWords() {
+    const kw = document.getElementById('searchInput').value.trim().toLowerCase();
+    if(!kw) { loadWords(currentSheetIndex); return; }
+    const container = document.getElementById('wordListContainer');
+    container.innerHTML = `<div class="sheet-title-container"><div class="sheet-title">搜索结果</div></div>`;
+    const listDiv = document.createElement('div');
+    listDiv.className = 'word-list';
+    let count = 1;
+    sheetNames.forEach(listName => {
+        const words = JSON.parse(AndroidBridge.getWordsByListName(listName));
+        words.forEach(item => {
+            if(item.word.toLowerCase().includes(kw) || item.meaning.toLowerCase().includes(kw)) {
+                listDiv.appendChild(createWordRow(item, count++));
+            }
+        });
+    });
+    container.appendChild(listDiv);
+    if(count === 1) listDiv.innerHTML = "<div style='text-align:center;padding:20px;color:#999'>未找到结果</div>";
+}
+
+document.getElementById('prevPage').onclick = () => { if(currentSheetIndex > 0) { loadWords(--currentSheetIndex); window.scrollTo(0,0); } };
+document.getElementById('nextPage').onclick = () => { if(currentSheetIndex < sheetNames.length - 1) { loadWords(++currentSheetIndex); window.scrollTo(0,0); } };
+
+document.getElementById('toggleAll').onclick = (e) => {
+    const ms = document.querySelectorAll('.meaning');
+    const anyHidden = Array.from(ms).some(m => m.style.display !== 'block');
+    ms.forEach(m => m.style.display = anyHidden ? 'block' : 'none');
+    e.target.textContent = anyHidden ? "折叠全部" : "展开全部";
+};
+    </script>
+</body>
+</html>
