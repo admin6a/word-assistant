@@ -11,11 +11,27 @@
         body { 
             font-family: -apple-system, sans-serif; 
             background-color: #f5f5f5; 
+            color: #333;
             -webkit-user-select: none; 
             user-select: none; 
-            padding: 10px 10px 120px 10px; /* 底部留足空间 */
+            padding: 0 10px 120px 10px; /* 顶部 padding 设为 0，因为 Toolbar 已经占位 */
         }
-        h1 { color: #333; text-align: center; margin: 10px 0; font-size: 1.3rem; }
+
+        /* 深色模式适配 */
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #121212; color: #e0e0e0; }
+            .word-list { background-color: #1e1e1e !important; box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important; }
+            .word { color: #ffffff !important; }
+            .meaning { background-color: #2c2c2c !important; color: #bbb !important; border-left-color: #3498db !important; }
+            .word-item { border-bottom-color: #333 !important; }
+            .search-bar input { background-color: #2c2c2c; border-color: #444; color: white; }
+            .btn-small { background-color: #1e1e1e; border-color: #3498db; color: #3498db; }
+            .bottom-nav { background: rgba(30, 30, 30, 0.95) !important; border-top: 1px solid #333; }
+            #currentPage { color: #aaa; }
+            #importGuide { background: #1e1e1e !important; }
+            #importGuide h2 { color: #eee !important; }
+            #importGuide p { color: #aaa !important; }
+        }
 
         /* 引导界面 */
         #importGuide { 
@@ -29,15 +45,15 @@
             font-size: 16px; font-weight: bold; box-shadow: 0 4px 10px rgba(39,174,96,0.3);
         }
 
-        /* 顶部操作区 */
-        .top-btns { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+        /* 顶部操作区 - 增加顶部间距代替已删除的标题 */
+        .top-btns { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; margin-top: 15px; }
         .btn-small { 
             flex: 1; padding: 10px 2px; border-radius: 20px; border: 1px solid #3498db; 
             background: white; color: #3498db; font-size: 13px; text-align: center; font-weight: bold;
         }
         .clear-marks-btn { color: #e67e22; border-color: #e67e22; }
 
-        /* 搜索栏适配修复 */
+        /* 搜索栏适配 */
         .search-bar { margin-bottom: 12px; display: flex; gap: 6px; width: 100%; }
         .search-bar input { 
             flex: 1; min-width: 0; padding: 10px; border: 1px solid #ddd; 
@@ -66,7 +82,7 @@
         .mark-checkbox:checked { background-color: #3498db; }
         .mark-checkbox:checked::after { content: "✓"; position: absolute; color: white; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; font-size: 16px; }
 
-        /* 底部导航常驻 */
+        /* 底部导航 */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; 
             background: rgba(255, 255, 255, 0.98); padding: 12px 10px; 
@@ -88,7 +104,6 @@
 </head>
 <body>
     <div id="mainContent" style="display:none">
-        <h1>单词助手</h1>
         <div class="top-btns">
             <button id="toggleAll" class="btn-small">展开全部</button>
             <button onclick="clearCurrentPageMarks()" class="btn-small clear-marks-btn">清除本页标记</button>
@@ -100,11 +115,10 @@
         <div id="wordListContainer"></div>
     </div>
 
-    <!-- 唯一导入入口 -->
+    <!-- 导入引导 -->
     <div id="importGuide">
         <h2 style="color:#333">未检测到单词库</h2>
         <p style="color:#666">请导入 JSON 单词表以开始学习</p>
-        <p style="color:#999; font-size:12px; margin-top:10px">格式要求: [{"word":"xxx","meaning":"xxx","list":"xxx"}]</p>
         <button class="guide-btn" onclick="AndroidBridge.requestExternalImport()">导入 JSON 单词表</button>
     </div>
 

@@ -5,7 +5,6 @@ plugins {
 
 android {
     namespace = "com.words.app"
-    // 升级到 36 以满足 androidx.core 1.18.0 的要求
     compileSdk = 36
 
     defaultConfig {
@@ -40,9 +39,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    
-    // 直接使用字符串引用，解决 toml 别名未定义的问题
     implementation("androidx.activity:activity-ktx:1.9.3")
+    // 添加 webkit 支持库用于深色模式适配
+    implementation("androidx.webkit:webkit:1.12.1")
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
