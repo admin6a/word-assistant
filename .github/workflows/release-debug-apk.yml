@@ -30,7 +30,6 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Create GitHub Release
-        id: create_release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
@@ -40,6 +39,8 @@ jobs:
           generate_release_notes: false
           body: |
             此版本为 **Debug 构建**，适合测试使用。
+          files: |
+            app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
