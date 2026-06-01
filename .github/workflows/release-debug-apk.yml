@@ -37,7 +37,7 @@ jobs:
           name: Debug Release ${{ github.ref_name }}
           draft: false
           prerelease: true
-          generate_release_notes: true
+          generate_release_notes: false
           body: |
             此版本为 **Debug 构建**，适合测试使用。
         env:
