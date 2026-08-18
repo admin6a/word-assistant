@@ -14,7 +14,7 @@
             color: #333;
             -webkit-user-select: none; 
             user-select: none; 
-            padding: 0 10px 120px 10px; /* 顶部 padding 设为 0，因为 Toolbar 已经占位 */
+            padding: 0 10px 120px 10px; 
         }
 
         /* 深色模式适配 */
@@ -26,11 +26,10 @@
             .word-item { border-bottom-color: #333 !important; }
             .search-bar input { background-color: #2c2c2c; border-color: #444; color: white; }
             .btn-small { background-color: #1e1e1e; border-color: #3498db; color: #3498db; }
-            .bottom-nav { background: rgba(30, 30, 30, 0.95) !important; border-top: 1px solid #333; }
-            #currentPage { color: #aaa; }
+            .bottom-nav, .top-nav { background: rgba(30, 30, 30, 0.95) !important; border-top: 1px solid #333; }
+            #currentPage, #topCurrentPage { color: #aaa; }
             #importGuide { background: #1e1e1e !important; }
-            #importGuide h2 { color: #eee !important; }
-            #importGuide p { color: #aaa !important; }
+            .review-option { background-color: #2c2c2c !important; border-color: #444 !important; color: #ddd !important; }
         }
 
         /* 引导界面 */
@@ -45,7 +44,7 @@
             font-size: 16px; font-weight: bold; box-shadow: 0 4px 10px rgba(39,174,96,0.3);
         }
 
-        /* 顶部操作区 - 增加顶部间距代替已删除的标题 */
+        /* 顶部操作区 */
         .top-btns { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; margin-top: 15px; }
         .btn-small { 
             flex: 1; padding: 10px 2px; border-radius: 20px; border: 1px solid #3498db; 
@@ -64,8 +63,8 @@
             border: none; border-radius: 8px; font-weight: bold; flex-shrink: 0;
         }
 
-        /* 单词列表 */
-        .word-list { background-color: white; border-radius: 12px; padding: 0 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        /* 单词列表 & 卡片 */
+        .word-list { background-color: white; border-radius: 12px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .word-item { padding: 15px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
         .word-item:last-child { border-bottom: none; }
         .word-content { flex: 1; min-width: 0; }
@@ -82,36 +81,75 @@
         .mark-checkbox:checked { background-color: #3498db; }
         .mark-checkbox:checked::after { content: "✓"; position: absolute; color: white; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; font-size: 16px; }
 
-        /* 底部导航 */
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: rgba(255, 255, 255, 0.98); padding: 12px 10px; 
-            box-shadow: 0 -3px 15px rgba(0,0,0,0.08); z-index: 1000; 
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        /* 复习模式样式 */
+        .review-option {
+            display: flex; align-items: center; padding: 14px; margin-bottom: 12px;
+            border: 2px solid #e0e0e0; border-radius: 10px; background-color: white;
+            cursor: pointer; font-size: 16px; color: #34495e; transition: all 0.2s;
         }
+        .review-option:hover { border-color: #3498db; }
+        .review-mark { display: inline-block; width: 24px; text-align: center; font-weight: bold; margin-right: 10px; }
+        .review-option.opt-correct { background-color: #d5f5e3; border-color: #27ae60; color: #1e8449; }
+        .review-option.opt-correct .review-mark { color: #27ae60; }
+        .review-option.opt-wrong { background-color: #fadbd8; border-color: #e74c3c; color: #c0392b; }
+        .review-option.opt-wrong .review-mark { color: #e74c3c; }
+
+        /* 导航公共样式 */
         .pagination { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 360px; }
         .pagination button { 
             padding: 10px 15px; background-color: #3498db; color: white; 
             border: none; border-radius: 8px; font-weight: bold; flex: 1; margin: 0 5px;
         }
         .pagination button:disabled { background-color: #eee; color: #bbb; }
-        #currentPage { font-weight: bold; font-size: 14px; min-width: 60px; text-align: center; }
-        
         .jump-box { font-size: 12px; color: #888; display: flex; align-items: center; gap: 5px; }
         .jump-box input { width: 45px; padding: 5px; border: 1px solid #ddd; border-radius: 6px; text-align: center; font-size: 14px; }
         .go-btn { background: #3498db; color: white; border: none; padding: 5px 12px; border-radius: 6px; font-weight: bold; }
+        .review-btn, .study-btn { background: #3498db !important; }
+
+        /* 底部导航 (学习模式) */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(255, 255, 255, 0.98); padding: 12px 10px; 
+            box-shadow: 0 -3px 15px rgba(0,0,0,0.08); z-index: 1000; 
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+
+        /* 顶部导航 (复习模式) */
+        .top-nav {
+            background: white; padding: 12px 10px; margin-bottom: 15px;
+            border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
     </style>
 </head>
 <body>
     <div id="mainContent" style="display:none">
-        <div class="top-btns">
-            <button id="toggleAll" class="btn-small">展开全部</button>
-            <button onclick="clearCurrentPageMarks()" class="btn-small clear-marks-btn">清除本页标记</button>
+        <!-- 学习模式顶栏 -->
+        <div id="studyControls">
+            <div class="top-btns">
+                <button id="toggleAll" class="btn-small">展开全部</button>
+                <button onclick="clearCurrentPageMarks()" class="btn-small clear-marks-btn">清除本页标记</button>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="输入单词或中文...">
+                <button onclick="searchWords()">搜索</button>
+            </div>
         </div>
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="输入单词或中文...">
-            <button onclick="searchWords()">搜索</button>
+
+        <!-- 复习模式顶栏 -->
+        <div id="reviewTopNav" class="top-nav" style="display:none">
+            <div class="pagination">
+                <button onclick="prevPage()">上一页</button>
+                <span id="topCurrentPage">1 / 1</span>
+                <button onclick="nextPage()">下一页</button>
+            </div>
+            <div class="jump-box">
+                跳至第 <input type="number" id="topJumpInput" min="1" onkeyup="if(event.keyCode==13)jumpToPage(true)"> 页 
+                <button class="go-btn" onclick="jumpToPage(true)">跳转</button>
+                <button class="go-btn study-btn" onclick="toggleMode()">去学习</button>
+            </div>
         </div>
+
         <div id="wordListContainer"></div>
     </div>
 
@@ -122,22 +160,32 @@
         <button class="guide-btn" onclick="AndroidBridge.requestExternalImport()">导入 JSON 单词表</button>
     </div>
 
+    <!-- 学习模式底栏 -->
     <div class="bottom-nav" id="bottomNav" style="display:none">
         <div class="pagination">
-            <button id="prevPage">上一页</button>
+            <button onclick="prevPage()">上一页</button>
             <span id="currentPage">1 / 1</span>
-            <button id="nextPage">下一页</button>
+            <button onclick="nextPage()">下一页</button>
         </div>
         <div class="jump-box">
-            跳至第 <input type="number" id="jumpInput" min="1" onkeyup="if(event.keyCode==13)jumpToPage()"> 页 
-            <button class="go-btn" onclick="jumpToPage()">跳转</button>
+            跳至第 <input type="number" id="jumpInput" min="1" onkeyup="if(event.keyCode==13)jumpToPage(false)"> 页 
+            <button class="go-btn" onclick="jumpToPage(false)">跳转</button>
+            <button class="go-btn review-btn" onclick="toggleMode()">去复习</button>
         </div>
     </div>
 
     <script>
 let sheetNames = []; 
 let currentSheetIndex = 0;
+let currentMode = 'study'; 
 let markedWords = new Set(JSON.parse(localStorage.getItem('markedWords') || '[]'));
+
+// 复习模式变量
+let reviewOrder = [];
+let reviewIndex = 0;
+let reviewAnswers = {};
+let reviewLocked = false;
+let allMeanings = [];
 
 function initFromAndroid() {
     if (typeof AndroidBridge !== "undefined") {
@@ -150,15 +198,41 @@ function initFromAndroid() {
         
         document.getElementById('importGuide').style.display = 'none';
         document.getElementById('mainContent').style.display = 'block';
-        document.getElementById('bottomNav').style.display = 'flex';
 
         sheetNames = JSON.parse(AndroidBridge.getListNames());
+        
+        allMeanings = [];
+        sheetNames.forEach(name => {
+            const words = JSON.parse(AndroidBridge.getWordsByListName(name));
+            words.forEach(w => allMeanings.push(w.meaning));
+        });
+
         const lastList = AndroidBridge.getLastListName();
         currentSheetIndex = sheetNames.indexOf(lastList);
         if (currentSheetIndex === -1) currentSheetIndex = 0;
         
-        loadWords(currentSheetIndex);
+        refreshView();
     }
+}
+
+function refreshView() {
+    if (currentMode === 'study') {
+        document.getElementById('studyControls').style.display = 'block';
+        document.getElementById('reviewTopNav').style.display = 'none';
+        document.getElementById('bottomNav').style.display = 'flex';
+        loadWords(currentSheetIndex);
+    } else {
+        document.getElementById('studyControls').style.display = 'none';
+        document.getElementById('reviewTopNav').style.display = 'flex';
+        document.getElementById('bottomNav').style.display = 'none';
+        startReview(currentSheetIndex);
+    }
+}
+
+function toggleMode() {
+    currentMode = currentMode === 'study' ? 'review' : 'study';
+    refreshView();
+    window.scrollTo(0,0);
 }
 
 function loadWords(idx) {
@@ -201,6 +275,172 @@ function createWordRow(item, displayIdx) {
     return row;
 }
 
+// --- 复习模式逻辑 ---
+function startReview(idx) {
+    currentSheetIndex = idx;
+    const listName = sheetNames[idx];
+    const words = JSON.parse(AndroidBridge.getWordsByListName(listName));
+    
+    reviewOrder = shuffleArr(words.slice());
+    reviewIndex = 0;
+    reviewAnswers = {};
+    reviewLocked = false;
+    
+    renderReviewQuestion();
+    updateUI();
+}
+
+function renderReviewQuestion() {
+    const listName = sheetNames[currentSheetIndex];
+    const total = reviewOrder.length;
+    const container = document.getElementById('wordListContainer');
+    container.innerHTML = '';
+
+    if (!total) {
+        container.innerHTML = '<div class="word-list" style="text-align:center">该列表暂无单词</div>';
+        return;
+    }
+
+    const q = reviewOrder[reviewIndex];
+    const qNo = reviewIndex + 1;
+
+    const correctMeaning = q.meaning;
+    let distractors = [];
+    let pool = shuffleArr(allMeanings.slice());
+    for (let d = 0; d < pool.length && distractors.length < 3; d++) {
+        if (pool[d] !== correctMeaning && !distractors.includes(pool[d])) {
+            distractors.push(pool[d]);
+        }
+    }
+    const options = shuffleArr([correctMeaning, ...distractors]);
+
+    const card = document.createElement('div');
+    card.className = 'word-list';
+    card.innerHTML = `
+        <div class="sheet-title-container">
+            <div class="sheet-title">${listName} 复习 (${qNo}/${total})</div>
+        </div>
+        <div style="font-size:1.4rem;font-weight:bold;color:#2c3e50;margin:15px 0 20px;text-align:center">${q.word}</div>
+        <div id="reviewOptions"></div>
+        <div style="display:flex;justify-content:center;gap:15px;margin-top:20px;">
+            <button onclick="prevReviewQuestion()" class="btn-small" style="max-width:100px">上一题</button>
+            <button onclick="nextReviewQuestion()" class="btn-small" style="max-width:100px">下一题</button>
+        </div>
+    `;
+    container.appendChild(card);
+
+    const optBox = document.getElementById('reviewOptions');
+    const letters = ['A', 'B', 'C', 'D'];
+    options.forEach((opt, i) => {
+        const optDiv = document.createElement('div');
+        optDiv.className = 'review-option';
+        optDiv.dataset.letter = letters[i];
+        optDiv.dataset.meaning = opt;
+        optDiv.innerHTML = `<span class="review-mark"></span><span>${opt}</span>`;
+        optDiv.onclick = function() { onSelectOption(this); };
+        optBox.appendChild(optDiv);
+    });
+
+    const saved = reviewAnswers[qNo];
+    if (saved) {
+        reviewLocked = true;
+        restoreReviewState(saved);
+    } else {
+        reviewLocked = false;
+    }
+}
+
+function prevReviewQuestion() { if (reviewIndex > 0) { reviewIndex--; renderReviewQuestion(); } }
+function nextReviewQuestion() { if (reviewIndex < reviewOrder.length - 1) { reviewIndex++; renderReviewQuestion(); } }
+
+function onSelectOption(el) {
+    if (reviewLocked) return;
+    const q = reviewOrder[reviewIndex];
+    const correctMeaning = q.meaning;
+    const chosenMeaning = el.dataset.meaning;
+    const chosenLetter = el.dataset.letter;
+    
+    reviewLocked = true;
+    const isCorrect = (chosenMeaning === correctMeaning);
+    const qNo = reviewIndex + 1;
+    
+    let correctLetter = '';
+    const opts = document.querySelectorAll('.review-option');
+    opts.forEach(opt => {
+        if (opt.dataset.meaning === correctMeaning) {
+            correctLetter = opt.dataset.letter;
+            markOption(opt, 'correct');
+        }
+    });
+    
+    if (!isCorrect) markOption(el, 'wrong');
+    reviewAnswers[qNo] = { selected: chosenLetter, correct: correctLetter, isCorrect: isCorrect };
+
+    if (isCorrect) {
+        setTimeout(() => {
+            if (reviewIndex < reviewOrder.length - 1) {
+                reviewIndex++;
+                renderReviewQuestion();
+            }
+        }, 500);
+    }
+}
+
+function markOption(el, type) {
+    el.classList.add(type === 'correct' ? 'opt-correct' : 'opt-wrong');
+    const mark = el.querySelector('.review-mark');
+    if (mark) mark.textContent = (type === 'correct') ? '✓' : '✗';
+}
+
+function restoreReviewState(saved) {
+    const opts = document.querySelectorAll('.review-option');
+    const q = reviewOrder[reviewIndex];
+    opts.forEach(opt => {
+        if (opt.dataset.meaning === q.meaning) {
+            markOption(opt, 'correct');
+        } else if (!saved.isCorrect && opt.dataset.letter === saved.selected) {
+            markOption(opt, 'wrong');
+        }
+    });
+}
+
+function shuffleArr(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// --- 通用 UI ---
+function updateUI() {
+    const pageText = `${currentSheetIndex + 1} / ${sheetNames.length}`;
+    document.getElementById('currentPage').textContent = pageText;
+    document.getElementById('topCurrentPage').textContent = pageText;
+    
+    const isFirst = currentSheetIndex === 0;
+    const isLast = currentSheetIndex === sheetNames.length - 1;
+    
+    document.querySelectorAll('.pagination button:first-child').forEach(b => b.disabled = isFirst);
+    document.querySelectorAll('.pagination button:last-child').forEach(b => b.disabled = isLast);
+    
+    document.getElementById('jumpInput').value = currentSheetIndex + 1;
+    document.getElementById('topJumpInput').value = currentSheetIndex + 1;
+}
+
+function prevPage() { if(currentSheetIndex > 0) { currentSheetIndex--; refreshView(); window.scrollTo(0,0); } }
+function nextPage() { if(currentSheetIndex < sheetNames.length - 1) { currentSheetIndex++; refreshView(); window.scrollTo(0,0); } }
+
+function jumpToPage(isTop) {
+    const inputId = isTop ? 'topJumpInput' : 'jumpInput';
+    const p = parseInt(document.getElementById(inputId).value);
+    if(p >= 1 && p <= sheetNames.length) {
+        currentSheetIndex = p - 1;
+        refreshView();
+        window.scrollTo(0,0);
+    }
+}
+
 function clearCurrentPageMarks() {
     const checks = document.querySelectorAll('.mark-checkbox');
     if(checks.length === 0) return;
@@ -213,22 +453,8 @@ function clearCurrentPageMarks() {
     }
 }
 
-function updateUI() {
-    document.getElementById('currentPage').textContent = `${currentSheetIndex + 1} / ${sheetNames.length}`;
-    document.getElementById('prevPage').disabled = currentSheetIndex === 0;
-    document.getElementById('nextPage').disabled = currentSheetIndex === sheetNames.length - 1;
-    document.getElementById('jumpInput').value = currentSheetIndex + 1;
-}
-
-function jumpToPage() {
-    const p = parseInt(document.getElementById('jumpInput').value);
-    if(p >= 1 && p <= sheetNames.length) {
-        loadWords(p - 1);
-        window.scrollTo(0,0);
-    }
-}
-
 function searchWords() {
+    if (currentMode !== 'study') return; 
     const kw = document.getElementById('searchInput').value.trim().toLowerCase();
     if(!kw) { loadWords(currentSheetIndex); return; }
     const container = document.getElementById('wordListContainer');
@@ -248,15 +474,25 @@ function searchWords() {
     if(count === 1) listDiv.innerHTML = "<div style='text-align:center;padding:20px;color:#999'>未找到结果</div>";
 }
 
-document.getElementById('prevPage').onclick = () => { if(currentSheetIndex > 0) { loadWords(--currentSheetIndex); window.scrollTo(0,0); } };
-document.getElementById('nextPage').onclick = () => { if(currentSheetIndex < sheetNames.length - 1) { loadWords(++currentSheetIndex); window.scrollTo(0,0); } };
-
 document.getElementById('toggleAll').onclick = (e) => {
     const ms = document.querySelectorAll('.meaning');
     const anyHidden = Array.from(ms).some(m => m.style.display !== 'block');
     ms.forEach(m => m.style.display = anyHidden ? 'block' : 'none');
     e.target.textContent = anyHidden ? "折叠全部" : "展开全部";
 };
+
+if (typeof AndroidBridge !== "undefined") {
+    initFromAndroid();
+} else {
+    window.AndroidBridge = {
+        hasData: () => true,
+        getListNames: () => JSON.stringify(["List 1", "List 2"]),
+        getWordsByListName: (name) => JSON.stringify([{word:"abandon", meaning:"vt. 离弃"}, {word:"ban", meaning:"v. 禁止"}]),
+        getLastListName: () => "List 1",
+        saveCurrentList: () => {}
+    };
+    initFromAndroid();
+}
     </script>
 </body>
 </html>
