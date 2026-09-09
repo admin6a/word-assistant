@@ -2,31 +2,26 @@
 
 [中文](./README.md)
 
-A simple and efficient Android word learning app that supports importing JSON format word lists, managing words by list groups, and providing search, marking, and review features.
+A simple and efficient Android app for learning and memorizing words, featuring a Single Page Application (SPA) architecture with global search, word marking, randomized review, and contextual example learning.
 
 ## Features
 
-- **JSON Word List Import**: Supports importing standard JSON format word data from external sources.
-- **List Grouping**: Automatically groups words by the "list" field.
-- **Study Mode**:
-    - **Word Search**: Supports searching by word or Chinese meaning.
-    - **Word Marking**: Can mark important words, marking status is persistent.
-    - **Expand/Collapse**: Click on words to expand/collapse meanings.
-    - **Pagination**: Supports switching between different word lists.
-- **Review Mode**:
-    - **Random Test**: Multiple-choice tests with a randomized order for the current list.
-    - **Smart Distractors**: Automatically extracts distractors from the entire word library.
-    - **Instant Feedback**: Shows correctness immediately; automatically jumps to the next question on correct answers.
-    - **State Memory**: Supports reviewing the previous question and its answer status during the review session.
-- **Dark Mode Support**: Perfectly supports the system dark mode.
-- **Responsive Design**: Adapts to different screen sizes.
+- **JSON Word List Import**: Supports importing standard JSON word data with complex structures including example sentences and translations.
+- **List Grouping**: Automatically identifies and groups words by the `list` field from the JSON data.
+- **3-in-1 Integrated Interface (SPA)**:
+    - **Study Mode**: Efficient list-based browsing. Click a word to expand its meaning, and mark words for persistent review.
+    - **Review Mode**: randomized multiple-choice tests for the current list, featuring instant feedback, smart distractors, and progress memory.
+    - **Sentence Mode**: Automatically displays original example sentences. Click to toggle English-Chinese translations for better contextual memorization.
+- **Comprehensive Search**: Global fuzzy search across words, meanings, and example sentences (including translations) in Study and Sentence modes.
+- **Unified UI Experience**: Card-style top navigation puts pagination, jumping, and mode switching right at your fingertips.
+- **Perfect Dark Mode**: Fully supports system-level Dark Mode for a comfortable reading experience.
 
 ## Technology Stack
 
-- **Android Kotlin**: Native Android development.
-- **WebView**: Loads HTML interface.
-- **HTML/CSS/JavaScript**: Front-end interface logic.
-- **JSON**: Data storage format.
+- **Android Kotlin**: Native Android development framework.
+- **WebView**: High-performance Web container for the core UI logic.
+- **HTML/CSS/JavaScript**: Responsive front-end interface and business logic.
+- **JSON**: Standard format for data storage and exchange.
 
 ## Project Structure
 
@@ -34,82 +29,56 @@ A simple and efficient Android word learning app that supports importing JSON fo
 ├── app/
 │   ├── src/
 │   │   ├── main/
-│   │   │   ├── java/com/words/app/    # Main code
-│   │   │   ├── assets/                # Static resources (index.html, etc.)
+│   │   │   ├── java/com/words/app/    # Native logic
+│   │   │   ├── assets/                # Core assets (index.html)
 │   │   │   ├── res/                   # Android resources
-│   │   │   └── AndroidManifest.xml    # App manifest
-│   │   ├── androidTest/               # Instrumented tests
-│   │   └── test/                      # Unit tests
-│   ├── build.gradle.kts               # App build configuration
-│   └── proguard-rules.pro             # Code obfuscation rules
-├── gradle/
-│   ├── wrapper/                       # Gradle wrapper
-│   └── libs.versions.toml             # Dependency version management
-├── build.gradle.kts                   # Project build configuration
-├── settings.gradle.kts                # Project settings
-├── gradle.properties                  # Gradle properties
-├── README.md                          # Chinese documentation
-└── README_EN.md                       # English documentation
+│   │   │   └── AndroidManifest.xml    # Manifest
+│   └── build.gradle.kts               # Build script
+├── README.md                          # Documentation (CN)
+└── README_EN.md                       # Documentation (EN)
 ```
 
 ## Quick Start
 
 ### Environment Requirements
 
-- Android Studio
-- Android SDK
-- Java Development Kit (JDK) 17+
+- Android Studio Flamingo or higher
+- JDK 17+
 
-### Build Steps
+### Build & Run
 
-1. Clone the project locally:
-   ```bash
-   git clone https://github.com/admin6a/word-assistant.git
-   ```
-
-2. Open Android Studio and select "Open an existing project".
-
-3. Select the project directory.
-
-4. Wait for Gradle synchronization to complete.
-
-5. Build and run the project.
-
-### Import Word List
-
-1. Prepare a JSON format word list with the following format:
+1. Clone the project.
+2. Open and build in Android Studio.
+3. Prepare your JSON word list (supports `examples` field):
    ```json
    [
-    { "word": "apple", "meaning": "n. apple", "list": "list1" },
-    { "word": "banana", "meaning": "n. banana", "list": "list2" },
-    { "word": "orange", "meaning": "n. orange", "list": "list2" },
-    { "word": "mango", "meaning": "n. mango", "list": "list3" }
+    {
+      "word":"apple",
+      "meaning":"n. 苹果",
+      "examples":{
+        "example1":{
+          "sentence":"I have an apple.",
+          "emeaning":"我拥有一个苹果。"
+        }
+      },
+      "list":"list1"
+    }
    ]
    ```
-
-2. After starting the app, click the "Import JSON Word List" button.
-
-3. Select the prepared JSON file.
-
-4. The app will automatically load and display words grouped by list.
+4. Click "Import JSON Word List" in the app to begin.
 
 ## Usage Instructions
 
-- **Switch Modes**: Click "Go Review" at the bottom to enter test mode, and click "Go Study" at the top to return to list mode.
-- **Study Mode**: Click word items to expand meanings, and check the box to mark words.
-- **Review Mode**: Select the correct meaning from four options. The system will automatically record your progress.
-- **Search Words**: Enter keywords in the search box in Study Mode (supports fuzzy matching).
-- **Clear Marks**: Click "Clear Current Page Marks" to reset the check status for the current list.
-
-## Data Storage
-
-- Word Data: Stored in `words_data.json` in the app's internal storage.
-- Marking Status: Stored in the WebView's `localStorage`.
-- Configuration: The last viewed list name is stored in Android `SharedPreferences`.
+- **Switch Modes**: Use the top navigation bar to jump between "Study", "Review", and "Sentence" modes seamlessly.
+- **Interaction Details**:
+    - **Study/Sentence Mode**: Click a word to show its meaning. In Sentence mode, click an English sentence to show/hide its translation.
+    - **Review Mode**: Click an option to answer. The system automatically jumps to the next question upon a correct answer.
+- **Global Search**: Use the search bar below the top navigation to search through all current lists.
+- **Clear Marks**: Click "Clear Page Marks" to reset the mark status for the current list.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## Contributing
 
